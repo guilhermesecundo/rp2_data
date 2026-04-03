@@ -1059,7 +1059,20 @@
       try {
         const raw = document.getElementById("dataset").textContent.trim();
         const parsed = raw ? JSON.parse(raw) : [];
-        return parsed.map(normalizarItem);
+        return parsed
+          .map(normalizarItem)
+          .sort((a, b) => {
+            const ano = Number(a.ano) - Number(b.ano);
+            if (ano !== 0) return ano;
+
+            const questao = Number(a.questao) - Number(b.questao);
+            if (questao !== 0) return questao;
+
+            const cenario = String(a.cenario || "").localeCompare(String(b.cenario || ""), "pt-BR");
+            if (cenario !== 0) return cenario;
+
+            return String(a.ia || "").localeCompare(String(b.ia || ""), "pt-BR");
+          });
       } catch (e) {
         console.error("Falha ao ler dataset:", e);
         return [];
